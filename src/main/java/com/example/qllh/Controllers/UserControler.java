@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @CrossOrigin
 @RequestMapping("/api/v1/users")
@@ -47,4 +49,17 @@ public class UserControler {
                                          @RequestParam(value = "limit", defaultValue = "1") Long limit) {
         return new ResponseEntity<>(userService.getPageUsers(textSearch, currentPage, limit, sortData, sortType), HttpStatus.OK);
     }
+    @GetMapping("/page_new")
+    public ResponseEntity<?> getPageUsersNew(@RequestParam(required = false, defaultValue = "") String nameSearch,
+                                             @RequestParam(required = false, defaultValue = "") String phoneNumber,
+                                             @RequestParam(required = false, defaultValue = "") String addressSearch,
+                                             @RequestParam(required = false, defaultValue = "") String roleSearch,
+                                             @RequestParam(required = false, defaultValue = "true, false") List<Boolean> genderSearch,
+                                             @RequestParam(defaultValue = "1") Long currentPage,
+                                             @RequestParam(defaultValue = "10") Long limit,
+                                             @RequestParam(defaultValue = "fullName") String sortData,
+                                             @RequestParam(defaultValue = "asc") String sortType) {
+        return new ResponseEntity<>(userService.getPageUsersNew( nameSearch, phoneNumber, addressSearch,  roleSearch,  genderSearch, currentPage, limit, sortData, sortType), HttpStatus.OK);
+    }
+
 }

@@ -6,6 +6,8 @@ import com.example.qllh.Model.ContentResponse;
 import com.example.qllh.Model.ResponseApi;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public interface IUserService {
     ResponseApi getUsers();
@@ -17,4 +19,6 @@ public interface IUserService {
     ResponseApi deleteUser(Long id);
 
     ContentResponse getPageUsers(String textSearch, Long currentPage, Long limit, String sortData, String sortType);
+
+    ContentResponse getPageUsersNew(String nameSearch, String phoneNumber, String addressSearch, String roleSearch, List<Boolean> genderSearch, Long currentPage, Long limit, String sortData, String sortType);
 }

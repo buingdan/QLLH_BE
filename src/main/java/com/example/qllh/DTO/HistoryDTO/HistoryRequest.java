@@ -17,4 +17,5 @@ public class HistoryRequest {
     String diagnostic;
     LocalDateTime startDate;
     LocalDateTime endDate;
+    boolean isActive;
 }

@@ -7,7 +7,6 @@ import com.example.qllh.Mapping.UserMapping;
 import com.example.qllh.Model.ContentResponse;
 import com.example.qllh.Model.ResponseApi;
 import com.example.qllh.Repositories.UsersRepository;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -60,6 +59,7 @@ public class UserService implements IUserService {
     public ResponseApi addUser(UserRequest userRequest) {
         try {
             Users userEntityList = UserMapping.mapRequestToEntity(userRequest);
+            userEntityList.setActive(true);
             usersRepository.save(userEntityList);
             return new ResponseApi("Thêm người dùng thành công!", null, true);
         } catch (Exception e) {
@@ -82,6 +82,7 @@ public class UserService implements IUserService {
             userEntity.setAddress(userRequest.getAddress());
             userEntity.setEmail(userRequest.getEmail());
             userEntity.setRole(userRequest.getRole());
+            userEntity.setActive(userEntity.isActive());
 
             usersRepository.save(userEntity);
             return new ResponseApi("Cập nhật dữ liệu thành công!", null, true);
@@ -97,7 +98,7 @@ public class UserService implements IUserService {
             if (userEntityOptional.isEmpty()) {
                 return new ResponseApi("Không tìm thấy dữ liệu người dùng", null, true);
             }
-            usersRepository.deleteById(id);
+            usersRepository.softDelete(id);
             return new ResponseApi("Xóa dữ liệu thành công!!", null, true);
         } catch (Exception e) {
             return new ResponseApi(e.getMessage(), null, false);
@@ -132,6 +133,36 @@ public class UserService implements IUserService {
             return contentResponse;
 
     }
+
+    @Override
+    public ContentResponse getPageUsersNew(String nameSearch, String phoneNumber, String addressSearch, String roleSearch, List<Boolean> genderSearch, Long currentPage, Long limit, String sortData, String sortType) {
+        ContentResponse contentResponse = new ContentResponse();
+        currentPage -= 1;
+        Pageable pageable = PageRequest.of(currentPage.intValue(), limit.intValue(), Sort.by(sortOrder(sortData, sortType)));
+        var list = usersRepository.searchUserNew(nameSearch, phoneNumber, addressSearch, genderSearch, roleSearch, pageable);
+        List<UserResponse> userResponseList = list
+                .stream()
+                .map(UserMapping::mapEntityToResponse)
+                .collect(Collectors.toList());
+
+        Integer totalUser = Math.toIntExact(list.getTotalElements());
+        Integer totalPageUser = Math.toIntExact(list.getTotalPages());
+        if (currentPage.intValue() > totalPageUser) {
+            currentPage = totalPageUser.longValue();
+            pageable = PageRequest.of(currentPage.intValue(), limit.intValue(), Sort.by(sortOrder(sortData, sortType)));
+            list = usersRepository.searchUserNew(nameSearch, phoneNumber, addressSearch, genderSearch, roleSearch, pageable);
+            userResponseList = list
+                    .stream()
+                    .map(UserMapping::mapEntityToResponse)
+                    .collect(Collectors.toList());
+            totalUser = Math.toIntExact(list.getTotalElements());
+        }
+        contentResponse.setList(userResponseList);
+        contentResponse.setCurrentPage(currentPage.intValue() + 1);
+        contentResponse.setTotalRecord(totalUser);
+        return contentResponse;
+    }
+
     public List<Sort.Order> sortOrder(String sort, String sortDirection) {
         System.out.println(sortDirection);
         List<Sort.Order> sorts = new ArrayList<>();

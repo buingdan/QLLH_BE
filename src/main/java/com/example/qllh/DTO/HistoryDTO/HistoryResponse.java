@@ -20,4 +20,5 @@ public class HistoryResponse {
     String diagnostic;
     LocalDateTime startDate;
     LocalDateTime endDate;
+    boolean isActive;
 }

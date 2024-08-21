@@ -35,4 +35,7 @@ public class Users {
 
     @Column(name = "role")
     private String role;
+
+    @Column(name = "is_active")
+    private boolean isActive;
 }

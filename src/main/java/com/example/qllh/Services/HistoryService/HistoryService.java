@@ -3,11 +3,8 @@ package com.example.qllh.Services.HistoryService;
 
 import com.example.qllh.DTO.HistoryDTO.HistoryRequest;
 import com.example.qllh.DTO.HistoryDTO.HistoryResponse;
-import com.example.qllh.DTO.MedicalRecordDTO.MedicalRecordResponse;
 import com.example.qllh.Entities.History;
-import com.example.qllh.Entities.MedicalRecords;
 import com.example.qllh.Mapping.HistoryMapping;
-import com.example.qllh.Mapping.MedicalRecordMapping;
 import com.example.qllh.Model.ContentResponse;
 import com.example.qllh.Model.ResponseApi;
 import com.example.qllh.Repositories.HistoryRepository;
@@ -98,7 +95,7 @@ public class HistoryService implements IHistoryService {
             if (historyEntityOptional.isEmpty()) {
                 return new ResponseApi("Không tìm thấy dữ liệu lịch khám", null, true);
             }
-            historyRepository.deleteById(id);
+            historyRepository.softDelete(id);
             return new ResponseApi("Xóa dữ liệu thành công!!", null, true);
         } catch (Exception e) {
             return new ResponseApi(e.getMessage(), null, false);

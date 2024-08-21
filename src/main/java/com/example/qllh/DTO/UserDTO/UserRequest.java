@@ -18,4 +18,5 @@ public class UserRequest {
     String address;
     String email;
     String role;
+    boolean isActive;
 }
