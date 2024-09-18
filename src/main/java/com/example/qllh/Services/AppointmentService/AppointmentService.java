@@ -3,12 +3,10 @@ package com.example.qllh.Services.AppointmentService;
 
 import com.example.qllh.DTO.AppointmentDTO.AppointmentRequest;
 import com.example.qllh.DTO.AppointmentDTO.AppointmentResponse;
-import com.example.qllh.DTO.HistoryDTO.HistoryResponse;
 import com.example.qllh.DTO.MedicalRecordDTO.MedicalRecordResponse;
 import com.example.qllh.Entities.Appointments;
 import com.example.qllh.Entities.History;
 import com.example.qllh.Mapping.AppointmentMapping;
-import com.example.qllh.Mapping.HistoryMapping;
 import com.example.qllh.Mapping.MedicalRecordMapping;
 import com.example.qllh.Model.ContentResponse;
 import com.example.qllh.Model.ResponseApi;
@@ -19,6 +17,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -83,7 +82,9 @@ public class AppointmentService implements IAppointmentService {
             appointmentEntity.setPatientId(appointmentRequest.getPatientId());
             appointmentEntity.setDescription(appointmentRequest.getDescription());
             appointmentEntity.setDoctorId(appointmentRequest.getDoctorId());
-
+            appointmentEntity.setPatientName(appointmentRequest.getPatientName());
+            appointmentEntity.setDoctorName(appointmentRequest.getDoctorName());
+            appointmentEntity.setAppointmentTime(appointmentRequest.getAppointmentTime());
 
             appointmentsRepository.save(appointmentEntity);
             return new ResponseApi("Cập nhật dữ liệu thành công!", null, true);
@@ -135,6 +136,35 @@ public class AppointmentService implements IAppointmentService {
         return contentResponse;
     }
 
+    @Override
+    public ContentResponse getPageAppointmentNew(String patientSearch, String doctorSearch, LocalDate startDate, LocalDate endDate, Long currentPage, Long limit, String sortData, String sortType) {
+        ContentResponse contentResponse = new ContentResponse();
+        currentPage -= 1;
+        Pageable pageable = PageRequest.of(currentPage.intValue(), limit.intValue(), Sort.by(sortOrder(sortData, sortType)));
+        var list = appointmentsRepository.searchAppointmentNew(patientSearch,doctorSearch, startDate, endDate, pageable);
+        List<AppointmentResponse> appointmentResponseList = list
+                .stream()
+                .map(AppointmentMapping::mapEntityToResponse)
+                .collect(Collectors.toList());
+
+        Integer totalAppointment = Math.toIntExact(list.getTotalElements());
+        Integer totalPageMedicalRecord = Math.toIntExact(list.getTotalPages());
+        if (currentPage.intValue() > totalPageMedicalRecord) {
+            currentPage = totalPageMedicalRecord.longValue();
+            pageable = PageRequest.of(currentPage.intValue(), limit.intValue(), Sort.by(sortOrder(sortData, sortType)));
+            list = appointmentsRepository.searchAppointmentNew(patientSearch,doctorSearch, startDate, endDate, pageable);
+            appointmentResponseList = list
+                    .stream()
+                    .map(AppointmentMapping::mapEntityToResponse)
+                    .collect(Collectors.toList());
+            totalAppointment = Math.toIntExact(list.getTotalElements());
+        }
+        contentResponse.setList(appointmentResponseList);
+        contentResponse.setCurrentPage(currentPage.intValue() + 1);
+        contentResponse.setTotalRecord(totalAppointment);
+        return contentResponse;
+    }
+
     public List<Sort.Order> sortOrder(String sort, String sortDirection) {
         System.out.println(sortDirection);
         List<Sort.Order> sorts = new ArrayList<>();
@@ -147,4 +177,6 @@ public class AppointmentService implements IAppointmentService {
         sorts.add(new Sort.Order(direction, sort));
         return sorts;
     }
+
+
 }

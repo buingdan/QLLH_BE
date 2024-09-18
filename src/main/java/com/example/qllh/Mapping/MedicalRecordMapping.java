@@ -11,7 +11,12 @@ public class MedicalRecordMapping {
     public static MedicalRecords mapRequestToEntity(MedicalRecordRequest medicalRecordRequest) {
         MedicalRecords medicalRecordEntity = new MedicalRecords();
         medicalRecordEntity.setUserId(medicalRecordRequest.getUserId());
-        medicalRecordEntity.setHistoryId(medicalRecordRequest.getHistoryId());
+        medicalRecordEntity.setInsuranceCode(medicalRecordRequest.getInsuranceCode());
+        medicalRecordEntity.setDiagnostic(medicalRecordRequest.getDiagnostic());
+        medicalRecordEntity.setStartDate(medicalRecordRequest.getStartDate());
+        medicalRecordEntity.setEndDate(medicalRecordRequest.getEndDate());
+        medicalRecordEntity.setTextNote(medicalRecordRequest.getTextNote());
+        medicalRecordEntity.setProgressCompleted(medicalRecordRequest.getProgressCompleted());
 
         return medicalRecordEntity;
     }
@@ -20,7 +25,12 @@ public class MedicalRecordMapping {
         MedicalRecordResponse medicalRecordResponse = new MedicalRecordResponse();
         medicalRecordResponse.setId(medicalRecordEntity.getId());
         medicalRecordResponse.setUserId(medicalRecordEntity.getUserId());
-        medicalRecordResponse.setHistoryId(medicalRecordEntity.getHistoryId());
+        medicalRecordResponse.setInsuranceCode(medicalRecordEntity.getInsuranceCode());
+        medicalRecordResponse.setDiagnostic(medicalRecordEntity.getDiagnostic());
+        medicalRecordResponse.setStartDate(medicalRecordEntity.getStartDate());
+        medicalRecordResponse.setEndDate(medicalRecordEntity.getEndDate());
+        medicalRecordResponse.setTextNote(medicalRecordEntity.getTextNote());
+        medicalRecordResponse.setProgressCompleted(medicalRecordEntity.getProgressCompleted());
 
         return medicalRecordResponse;
     }

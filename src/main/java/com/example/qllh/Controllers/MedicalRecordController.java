@@ -3,9 +3,12 @@ package com.example.qllh.Controllers;
 import com.example.qllh.DTO.MedicalRecordDTO.MedicalRecordRequest;
 import com.example.qllh.Services.MedicalRecordService.MedicalRecordService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
 @CrossOrigin
@@ -40,11 +43,14 @@ public class MedicalRecordController {
     }
 
     @GetMapping("/page")
-    public ResponseEntity<?> getMedicalRecords(@RequestParam(value = "textSearch", defaultValue = "") String textSearch,
+    public ResponseEntity<?> getMedicalRecords(@RequestParam(value = "patientSearch", defaultValue = "") String patientSearch,
+                                               @RequestParam(value = "insuranceSearch", defaultValue = "") String insuranceSearch,
+                                               @RequestParam LocalDate startDate,
+                                               @RequestParam LocalDate endDate,
                                           @RequestParam(value = "sortData", defaultValue = "id") String sortData,
-                                          @RequestParam(value = "sortType", defaultValue = "asc") String sortType,
+                                          @RequestParam(value = "sortType", defaultValue = "desc") String sortType,
                                           @RequestParam(value = "currentPage", defaultValue = "1") Long currentPage,
                                           @RequestParam(value = "limit", defaultValue = "1") Long limit) {
-        return new ResponseEntity<>(medicalRecordService.getPageMedicalRecords(textSearch, currentPage, limit, sortData, sortType), HttpStatus.OK);
+        return new ResponseEntity<>(medicalRecordService.getPageMedicalRecords(patientSearch,insuranceSearch, startDate, endDate, currentPage, limit, sortData, sortType), HttpStatus.OK);
     }
 }

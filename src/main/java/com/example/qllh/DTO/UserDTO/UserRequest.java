@@ -19,4 +19,5 @@ public class UserRequest {
     String email;
     String role;
     boolean isActive;
+    String textNote;
 }

@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.time.LocalDate;
+
 @Getter
 @Setter
 @Builder
@@ -15,5 +17,11 @@ import lombok.experimental.FieldDefaults;
 public class MedicalRecordResponse {
     Long id;
     Users userId;
-    History historyId;
+    String diagnostic;
+    LocalDate startDate;
+    LocalDate endDate;
+    String textNote;
+    String insuranceCode;
+    boolean isActive;
+    String progressCompleted;
 }

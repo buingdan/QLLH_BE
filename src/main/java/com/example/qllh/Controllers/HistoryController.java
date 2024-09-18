@@ -3,9 +3,12 @@ package com.example.qllh.Controllers;
 import com.example.qllh.DTO.HistoryDTO.HistoryRequest;
 import com.example.qllh.Services.HistoryService.HistoryService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
 
 @RestController
 @CrossOrigin
@@ -42,9 +45,21 @@ public class HistoryController {
     @GetMapping("/page")
     public ResponseEntity<?> getHistory(@RequestParam(value = "textSearch", defaultValue = "") String textSearch,
                                                @RequestParam(value = "sortData", defaultValue = "id") String sortData,
-                                               @RequestParam(value = "sortType", defaultValue = "asc") String sortType,
+                                               @RequestParam(value = "sortType", defaultValue = "desc") String sortType,
                                                @RequestParam(value = "currentPage", defaultValue = "1") Long currentPage,
                                                @RequestParam(value = "limit", defaultValue = "1") Long limit) {
         return new ResponseEntity<>(historyService.getPageHistory(textSearch, currentPage, limit, sortData, sortType), HttpStatus.OK);
     }
+
+    @GetMapping("/page_new")
+    public ResponseEntity<?> getHistoryNew(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate,
+                                        @RequestParam(value = "sortData", defaultValue = "id") String sortData,
+                                        @RequestParam(value = "sortType", defaultValue = "desc") String sortType,
+                                        @RequestParam(value = "currentPage", defaultValue = "1") Long currentPage,
+                                        @RequestParam(value = "limit", defaultValue = "1") Long limit) {
+        return new ResponseEntity<>(historyService.getPageHistoryNew(startDate, endDate,currentPage, limit, sortData, sortType), HttpStatus.OK);
+    }
+
+
 }

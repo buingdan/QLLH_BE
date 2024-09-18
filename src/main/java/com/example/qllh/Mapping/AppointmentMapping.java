@@ -13,6 +13,9 @@ public class AppointmentMapping {
         appointmentEntity.setPatientId(appointmentRequest.getPatientId());
         appointmentEntity.setDescription(appointmentRequest.getDescription());
         appointmentEntity.setDoctorId(appointmentRequest.getDoctorId());
+        appointmentEntity.setPatientName(appointmentRequest.getPatientName());
+        appointmentEntity.setDoctorName(appointmentRequest.getDoctorName());
+        appointmentEntity.setAppointmentTime(appointmentRequest.getAppointmentTime());
 
         return appointmentEntity;
     }
@@ -23,6 +26,9 @@ public class AppointmentMapping {
         appointmentResponse.setPatientId(appointmentEntity.getPatientId());
         appointmentResponse.setDescription(appointmentEntity.getDescription());
         appointmentResponse.setDoctorId(appointmentEntity.getDoctorId());
+        appointmentResponse.setPatientName(appointmentEntity.getPatientName());
+        appointmentResponse.setDoctorName(appointmentEntity.getDoctorName());
+        appointmentResponse.setAppointmentTime(appointmentEntity.getAppointmentTime());
 
         return appointmentResponse;
     }

@@ -44,22 +44,31 @@ public class UserControler {
     @GetMapping("/page")
     public ResponseEntity<?> getPageUsers(@RequestParam(value = "textSearch", defaultValue = "") String textSearch,
                                          @RequestParam(value = "sortData", defaultValue = "id") String sortData,
-                                         @RequestParam(value = "sortType", defaultValue = "asc") String sortType,
+                                         @RequestParam(value = "sortType", defaultValue = "desc") String sortType,
                                          @RequestParam(value = "currentPage", defaultValue = "1") Long currentPage,
                                          @RequestParam(value = "limit", defaultValue = "1") Long limit) {
         return new ResponseEntity<>(userService.getPageUsers(textSearch, currentPage, limit, sortData, sortType), HttpStatus.OK);
     }
     @GetMapping("/page_new")
     public ResponseEntity<?> getPageUsersNew(@RequestParam(required = false, defaultValue = "") String nameSearch,
-                                             @RequestParam(required = false, defaultValue = "") String phoneNumber,
+                                             @RequestParam(required = false, defaultValue = "") String phoneSearch,
                                              @RequestParam(required = false, defaultValue = "") String addressSearch,
                                              @RequestParam(required = false, defaultValue = "") String roleSearch,
                                              @RequestParam(required = false, defaultValue = "true, false") List<Boolean> genderSearch,
                                              @RequestParam(defaultValue = "1") Long currentPage,
                                              @RequestParam(defaultValue = "10") Long limit,
-                                             @RequestParam(defaultValue = "fullName") String sortData,
-                                             @RequestParam(defaultValue = "asc") String sortType) {
-        return new ResponseEntity<>(userService.getPageUsersNew( nameSearch, phoneNumber, addressSearch,  roleSearch,  genderSearch, currentPage, limit, sortData, sortType), HttpStatus.OK);
+                                             @RequestParam(defaultValue = "id") String sortData,
+                                             @RequestParam(defaultValue = "desc") String sortType) {
+        return new ResponseEntity<>(userService.getPageUsersNew( nameSearch, phoneSearch, addressSearch,  roleSearch,  genderSearch, currentPage, limit, sortData, sortType), HttpStatus.OK);
     }
 
+    @GetMapping("/patient")
+    public ResponseEntity<?> getPatients() {
+        return new ResponseEntity<>(userService.getPatients(), HttpStatus.OK);
+    }
+
+    @GetMapping("/doctor")
+    public ResponseEntity<?> getDoctor() {
+        return new ResponseEntity<>(userService.getDoctors(), HttpStatus.OK);
+    }
 }

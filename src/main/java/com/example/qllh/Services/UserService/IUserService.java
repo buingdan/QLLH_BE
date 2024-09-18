@@ -21,4 +21,9 @@ public interface IUserService {
     ContentResponse getPageUsers(String textSearch, Long currentPage, Long limit, String sortData, String sortType);
 
     ContentResponse getPageUsersNew(String nameSearch, String phoneNumber, String addressSearch, String roleSearch, List<Boolean> genderSearch, Long currentPage, Long limit, String sortData, String sortType);
+
+    ResponseApi getPatients();
+
+    ResponseApi getDoctors();
+
 }

@@ -19,4 +19,5 @@ public class UserResponse {
     String email;
     String role;
     boolean isActive;
+    String textNote;
 }

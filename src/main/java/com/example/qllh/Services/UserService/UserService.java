@@ -2,6 +2,7 @@ package com.example.qllh.Services.UserService;
 
 import com.example.qllh.DTO.UserDTO.UserRequest;
 import com.example.qllh.DTO.UserDTO.UserResponse;
+import com.example.qllh.Entities.Appointments;
 import com.example.qllh.Entities.Users;
 import com.example.qllh.Mapping.UserMapping;
 import com.example.qllh.Model.ContentResponse;
@@ -135,11 +136,11 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public ContentResponse getPageUsersNew(String nameSearch, String phoneNumber, String addressSearch, String roleSearch, List<Boolean> genderSearch, Long currentPage, Long limit, String sortData, String sortType) {
+    public ContentResponse getPageUsersNew(String nameSearch, String phoneSearch, String addressSearch, String roleSearch, List<Boolean> genderSearch, Long currentPage, Long limit, String sortData, String sortType) {
         ContentResponse contentResponse = new ContentResponse();
         currentPage -= 1;
         Pageable pageable = PageRequest.of(currentPage.intValue(), limit.intValue(), Sort.by(sortOrder(sortData, sortType)));
-        var list = usersRepository.searchUserNew(nameSearch, phoneNumber, addressSearch, genderSearch, roleSearch, pageable);
+        var list = usersRepository.searchUserNew(nameSearch, phoneSearch, addressSearch, genderSearch, roleSearch, pageable);
         List<UserResponse> userResponseList = list
                 .stream()
                 .map(UserMapping::mapEntityToResponse)
@@ -150,7 +151,7 @@ public class UserService implements IUserService {
         if (currentPage.intValue() > totalPageUser) {
             currentPage = totalPageUser.longValue();
             pageable = PageRequest.of(currentPage.intValue(), limit.intValue(), Sort.by(sortOrder(sortData, sortType)));
-            list = usersRepository.searchUserNew(nameSearch, phoneNumber, addressSearch, genderSearch, roleSearch, pageable);
+            list = usersRepository.searchUserNew(nameSearch, phoneSearch, addressSearch, genderSearch, roleSearch, pageable);
             userResponseList = list
                     .stream()
                     .map(UserMapping::mapEntityToResponse)
@@ -161,6 +162,34 @@ public class UserService implements IUserService {
         contentResponse.setCurrentPage(currentPage.intValue() + 1);
         contentResponse.setTotalRecord(totalUser);
         return contentResponse;
+    }
+
+    @Override
+    public ResponseApi getPatients() {
+        try {
+            List<Users> userEntityList = usersRepository.findPatients();
+            List<UserResponse> userResponseList = userEntityList
+                    .stream()
+                    .map(UserMapping::mapEntityToResponse)
+                    .collect(Collectors.toList());
+            return new ResponseApi("Lấy dữ liệu người dùng thành công!", userEntityList, true);
+        } catch (Exception e) {
+            return new ResponseApi(e.getMessage(), null, false);
+        }
+    }
+
+    @Override
+    public ResponseApi getDoctors() {
+        try {
+            List<Users> userEntityList = usersRepository.findDoctors();
+            List<UserResponse> userResponseList = userEntityList
+                    .stream()
+                    .map(UserMapping::mapEntityToResponse)
+                    .collect(Collectors.toList());
+            return new ResponseApi("Lấy dữ liệu người dùng thành công!", userEntityList, true);
+        } catch (Exception e) {
+            return new ResponseApi(e.getMessage(), null, false);
+        }
     }
 
     public List<Sort.Order> sortOrder(String sort, String sortDirection) {

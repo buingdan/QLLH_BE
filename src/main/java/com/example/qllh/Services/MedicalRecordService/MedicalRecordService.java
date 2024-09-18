@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -32,7 +33,7 @@ public class MedicalRecordService implements IMedicalRecordService {
                     .stream()
                     .map(MedicalRecordMapping::mapEntityToResponse)
                     .collect(Collectors.toList());
-            return new ResponseApi("Lấy dữ liệu hồ sơ bệnh án thành công!", medicalRecordEntityList, true);
+            return new ResponseApi("Lấy dữ liệu hồ sơ bệnh án thành công!", medicalRecordResponseList, true);
         } catch (Exception e) {
             return new ResponseApi(e.getMessage(), null, false);
         }
@@ -60,6 +61,8 @@ public class MedicalRecordService implements IMedicalRecordService {
     public ResponseApi addMedicalRecord(MedicalRecordRequest medicalRecordRequest) {
         try {
             MedicalRecords medicalRecordEntityList = MedicalRecordMapping.mapRequestToEntity(medicalRecordRequest);
+            medicalRecordEntityList.setActive(true);
+            medicalRecordEntityList.setProgressCompleted("");
             medicalRecordsRepository.save(medicalRecordEntityList);
             return new ResponseApi("Thêm hồ sơ bệnh án thành công!", null, true);
         } catch (Exception e) {
@@ -76,7 +79,12 @@ public class MedicalRecordService implements IMedicalRecordService {
             }
             MedicalRecords medicalRecordEntity = medicalRecordEntityOptional.get();
             medicalRecordEntity.setUserId(medicalRecordRequest.getUserId());
-            medicalRecordEntity.setHistoryId(medicalRecordRequest.getHistoryId());
+            medicalRecordEntity.setDiagnostic(medicalRecordRequest.getDiagnostic());
+            medicalRecordEntity.setEndDate(medicalRecordRequest.getEndDate());
+            medicalRecordEntity.setStartDate(medicalRecordRequest.getStartDate());
+            medicalRecordEntity.setInsuranceCode(medicalRecordRequest.getInsuranceCode());
+            medicalRecordEntity.setProgressCompleted(medicalRecordEntity.getProgressCompleted());
+            medicalRecordEntity.setTextNote(medicalRecordRequest.getTextNote());
 
             medicalRecordsRepository.save(medicalRecordEntity);
             return new ResponseApi("Cập nhật dữ liệu hồ sơ bệnh án thành công!", null, true);
@@ -92,7 +100,7 @@ public class MedicalRecordService implements IMedicalRecordService {
             if (medicalRecordEntityOptional.isEmpty()) {
                 return new ResponseApi("Không tìm thấy dữ liệu hồ sơ bệnh án", null, true);
             }
-            medicalRecordsRepository.deleteById(id);
+            medicalRecordsRepository.softDelete(id);
             return new ResponseApi("Xóa dữ liệu hồ sơ bệnh án!!", null, true);
         } catch (Exception e) {
             return new ResponseApi(e.getMessage(), null, false);
@@ -100,11 +108,11 @@ public class MedicalRecordService implements IMedicalRecordService {
     }
 
     @Override
-    public ContentResponse getPageMedicalRecords(String textSearch, Long currentPage, Long limit, String sortData, String sortType) {
+    public ContentResponse getPageMedicalRecords(String patientSearch, String insuranceSearch, LocalDate startDate,LocalDate endDate, Long currentPage, Long limit, String sortData, String sortType) {
         ContentResponse contentResponse = new ContentResponse();
         currentPage -= 1;
         Pageable pageable = PageRequest.of(currentPage.intValue(), limit.intValue(), Sort.by(sortOrder(sortData, sortType)));
-        var list = medicalRecordsRepository.searchMedicalRecords(textSearch, pageable);
+        var list = medicalRecordsRepository.searchMedicalRecords(patientSearch,insuranceSearch, startDate, endDate, pageable);
         List<MedicalRecordResponse> medicalRecordsResponseList = list
                 .stream()
                 .map(MedicalRecordMapping::mapEntityToResponse)
@@ -115,7 +123,7 @@ public class MedicalRecordService implements IMedicalRecordService {
         if (currentPage.intValue() > totalPageMedicalRecord) {
             currentPage = totalPageMedicalRecord.longValue();
             pageable = PageRequest.of(currentPage.intValue(), limit.intValue(), Sort.by(sortOrder(sortData, sortType)));
-            list = medicalRecordsRepository.searchMedicalRecords(textSearch, pageable);
+            list = medicalRecordsRepository.searchMedicalRecords(patientSearch,insuranceSearch, startDate, endDate, pageable);;
             medicalRecordsResponseList = list
                     .stream()
                     .map(MedicalRecordMapping::mapEntityToResponse)
